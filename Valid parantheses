@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+bool isValid(char * s)
+{
+    int n = 0; 
+    char *stack = (char *)malloc(strlen(s) * sizeof(char));
+    for(int i = 0; s[i] != '\0'; i++)
+    {
+        char ch = s[i];
+        if(ch == '(' || ch == '[' || ch == '{'){
+            stack[n++] = ch; 
+        } 
+        else 
+        {
+            if(n==0) return false; 
+    char open = stack[--n]; 
+if((open == '(' && ch != ')') ||(open =='['&& ch!=']') ||(open =='{'&&ch !='}'))
+{
+                return false;
+            }
+        }
+    }
+    bool valid = (n == 0); 
+    free(stack);
+    return valid;
+}
