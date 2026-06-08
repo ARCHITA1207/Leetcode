@@ -1,0 +1,49 @@
+#include <stdlib.h>
+typedef struct {
+    int val;
+    int mapped;
+    int idx;
+} Node;
+int mappingArr[10];
+int getMapped(int num)
+{
+    if(num == 0) return mappingArr[0];
+    int res = 0;
+    int place = 1;
+    while(num > 0)
+    {
+        int d = num % 10;
+        res += mappingArr[d] * place;
+        place *= 10;
+        num=num/10;
+    }
+ return res;
+}
+int cmp(const void *a, const void *b)
+{
+    Node *x = (Node*)a;
+    Node *y = (Node*)b;
+    if(x->mapped == y->mapped)
+        return x->idx - y->idx;
+    return x->mapped - y->mapped;
+}
+int* sortJumbled(int* mapping, int mappingSize,
+                 int* nums, int numsSize,
+                 int* returnSize)
+{
+    for(int i = 0; i < 10; i++)
+        mappingArr[i] = mapping[i];
+    Node *arr = malloc(numsSize * sizeof(Node));
+    for(int i = 0; i < numsSize; i++)
+    {
+        arr[i].val = nums[i];
+        arr[i].mapped = getMapped(nums[i]);
+        arr[i].idx = i;
+    }
+    qsort(arr, numsSize, sizeof(Node), cmp);
+    int *ans = malloc(numsSize * sizeof(int));
+    for(int i = 0; i < numsSize; i++)
+        ans[i] = arr[i].val;
+    *returnSize = numsSize;
+    return ans;
+}
