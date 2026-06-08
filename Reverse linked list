@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct Node
+{
+    int data;
+    struct Node *next;
+};
+struct Node *tail = NULL;
+struct ListNode* reverseList(struct ListNode* head)
+{
+    struct ListNode *prev = NULL, *next = NULL;
+    while (head)
+    {
+        next = head->next;
+        head->next = prev;
+        prev = head;
+        head = next;
+    }
+
+    return prev;
+}
