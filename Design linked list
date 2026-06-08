@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int val;
+    struct Node *prev;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    Node *tail;
+    int size;
+} MyLinkedList;
+
+MyLinkedList* myLinkedListCreate() {
+    MyLinkedList *list = malloc(sizeof(MyLinkedList));
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+    return list;
+}
+
+int myLinkedListGet(MyLinkedList* list, int index) {
+    if (index < 0 || index >= list->size) return -1;
+    Node *curr = list->head;
+    for (int i = 0; i < index; i++) curr = curr->next;
+    return curr->val;
+}
+
+void myLinkedListAddAtHead(MyLinkedList* list, int val) {
+    Node *node = malloc(sizeof(Node));
+    node->val = val;
+    node->prev = NULL;
+    node->next = list->head;
+    if (list->head) list->head->prev = node;
+    list->head = node;
+    if (!list->tail) list->tail = node;
+    list->size++;
+}
+
+void myLinkedListAddAtTail(MyLinkedList* list, int val) {
+    Node *node = malloc(sizeof(Node));
+    node->val = val;
+    node->next = NULL;
+    node->prev = list->tail;
+    if (list->tail) list->tail->next = node;
+    list->tail = node;
+    if (!list->head) list->head = node;
+    list->size++;
+}
+
+void myLinkedListAddAtIndex(MyLinkedList* list, int index, int val) {
+    if (index < 0 || index > list->size) return;
+    if (index == 0) { myLinkedListAddAtHead(list, val); return; }
+    if (index == list->size) { myLinkedListAddAtTail(list, val); return; }
+
+    Node *curr = list->head;
+    for (int i = 0; i < index - 1; i++) curr = curr->next;
+
+    Node *node = malloc(sizeof(Node));
+    node->val = val;
+    node->next = curr->next;
+    node->prev = curr;
+    curr->next->prev = node;
+    curr->next = node;
+    list->size++;
+}
+
+void myLinkedListDeleteAtIndex(MyLinkedList* list, int index) {
+    if (index < 0 || index >= list->size) return;
+    Node *curr = list->head;
+
+    if (index == 0) {
+        list->head = curr->next;
+        if (list->head) list->head->prev = NULL;
+        else list->tail = NULL;
+        free(curr);
+    } else {
+        for (int i = 0; i < index; i++) curr = curr->next;
+        curr->prev->next = curr->next;
+        if (curr->next) curr->next->prev = curr->prev;
+        else list->tail = curr->prev;
+        free(curr);
+    }
+    list->size--;
+}
+
+void myLinkedListFree(MyLinkedList* list) {
+    Node *curr = list->head;
+    while (curr) {
+        Node *next = curr->next;
+        free(curr);
+        curr = next;
+    }
+    free(list);
+}
